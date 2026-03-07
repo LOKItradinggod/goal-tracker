@@ -78,17 +78,20 @@ function formatDate(iso) {
 
 // Touch-safe button component for mobile
 function Btn({ onClick, style, disabled, children }) {
-  const handle = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (!disabled) onClick && onClick()
-  }
   return (
     <button
-      onPointerUp={handle}
-      onClick={e => e.preventDefault()}
+      onClick={(e) => {
+        e.stopPropagation()
+        if (!disabled) onClick && onClick()
+      }}
       disabled={disabled}
-      style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation', userSelect: 'none', ...style }}
+      style={{
+        WebkitTapHighlightColor: 'transparent',
+        touchAction: 'manipulation',
+        userSelect: 'none',
+        cursor: disabled ? 'default' : 'pointer',
+        ...style
+      }}
     >
       {children}
     </button>
@@ -107,12 +110,12 @@ const I = {
 }
 
 const S = {
-  topbar: { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 18px', borderBottom:'1px solid #16162a', background:'#0a0a14', position:'sticky', top:0, zIndex:100 },
+  topbar: { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 18px', borderBottom:'1px solid #16162a', background:'#0a0a14', position:'fixed', top:0, left:0, right:0, zIndex:999 },
   logo: { fontFamily:'Georgia,serif', fontWeight:700, fontSize:18, background:'linear-gradient(120deg,#dde1f5,#7c6ff7)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', WebkitTextFillColor:'transparent' },
-  page: { maxWidth:680, margin:'0 auto', padding:'20px 16px 100px' },
+  page: { maxWidth:680, margin:'0 auto', padding:'76px 16px 100px' },
   card: { background:'#0e0e1c', border:'1px solid #1a1a30', borderRadius:12, padding:'16px 18px', marginBottom:10, cursor:'pointer', WebkitTapHighlightColor:'transparent', touchAction:'manipulation' },
   btn: (bg='#7c6ff7', color='#fff') => ({ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:6, padding:'10px 18px', borderRadius:9, border:'none', background:bg, color, cursor:'pointer', fontSize:13, fontWeight:600, WebkitTapHighlightColor:'transparent', touchAction:'manipulation', userSelect:'none', minHeight:44 }),
-  btnSm: (bg='transparent', color='#8888aa') => ({ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:4, padding:'0', width:36, height:36, borderRadius:8, border:'1px solid #252540', background:bg, color, cursor:'pointer', fontSize:12, WebkitTapHighlightColor:'transparent', touchAction:'manipulation', userSelect:'none' }),
+  btnSm: (bg='transparent', color='#8888aa') => ({ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:4, padding:'0', width:44, height:44, borderRadius:8, border:'1px solid #252540', background:bg, color, cursor:'pointer', fontSize:12, WebkitTapHighlightColor:'transparent', touchAction:'manipulation', userSelect:'none' }),
   input: { width:'100%', background:'#0a0a14', border:'1px solid #1a1a30', borderRadius:8, padding:'12px', color:'#dde1f5', fontSize:16, outline:'none', WebkitAppearance:'none' },
   textarea: { width:'100%', background:'#0a0a14', border:'1px solid #1a1a30', borderRadius:8, padding:'12px', color:'#dde1f5', fontSize:16, outline:'none', resize:'vertical', minHeight:100, lineHeight:1.7, WebkitAppearance:'none' },
   label: { fontSize:11, color:'#555570', fontFamily:'DM Mono,monospace', letterSpacing:'0.12em', marginBottom:6, display:'block' },
@@ -344,7 +347,7 @@ export default function App() {
             <div style={S.sheet}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
                 <span style={{ fontSize:16, fontWeight:600 }}>记录进展</span>
-                {!evaluating && <Btn style={{ background:'none', border:'none', color:'#555570', cursor:'pointer', fontSize:24, padding:'0', width:36, height:36, display:'flex', alignItems:'center', justifyContent:'center' }} onClick={() => setShowAddLog(false)}>×</Btn>}
+                {!evaluating && <Btn style={{ background:'none', border:'none', color:'#555570', cursor:'pointer', fontSize:24, padding:'0', width:44, height:44, display:'flex', alignItems:'center', justifyContent:'center' }} onClick={() => setShowAddLog(false)}>×</Btn>}
               </div>
               <label style={S.label}>你今天做了什么？写得越具体，AI评分越准确。</label>
               <textarea style={S.textarea}
@@ -368,7 +371,7 @@ export default function App() {
             <div style={S.sheet}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
                 <span style={{ fontSize:16, fontWeight:600 }}>编辑目标</span>
-                <Btn style={{ background:'none', border:'none', color:'#555570', cursor:'pointer', fontSize:24, padding:'0', width:36, height:36, display:'flex', alignItems:'center', justifyContent:'center' }} onClick={() => setEditingGoal(null)}>×</Btn>
+                <Btn style={{ background:'none', border:'none', color:'#555570', cursor:'pointer', fontSize:24, padding:'0', width:44, height:44, display:'flex', alignItems:'center', justifyContent:'center' }} onClick={() => setEditingGoal(null)}>×</Btn>
               </div>
               <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
                 <div>
@@ -469,7 +472,7 @@ export default function App() {
           <div style={S.sheet}>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:18 }}>
               <span style={{ fontSize:16, fontWeight:600 }}>新建目标</span>
-              <Btn style={{ background:'none', border:'none', color:'#555570', cursor:'pointer', fontSize:24, padding:'0', width:36, height:36, display:'flex', alignItems:'center', justifyContent:'center' }} onClick={() => setShowAddGoal(false)}>×</Btn>
+              <Btn style={{ background:'none', border:'none', color:'#555570', cursor:'pointer', fontSize:24, padding:'0', width:44, height:44, display:'flex', alignItems:'center', justifyContent:'center' }} onClick={() => setShowAddGoal(false)}>×</Btn>
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
               <div><label style={S.label}>目标名称 *</label><input style={S.input} placeholder="例如：通过 SOA Exam P" value={gTitle} onChange={e => setGTitle(e.target.value)} /></div>

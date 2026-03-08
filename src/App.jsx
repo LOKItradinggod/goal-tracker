@@ -80,7 +80,7 @@ const db = {
   },
   async addGoal(goal) {
     await this.query('goals', { method: 'POST', prefer: 'return=minimal',
-      body: JSON.stringify({ id: goal.id, title: goal.title, description: goal.desc, target: goal.target, progress: goal.progress }) })
+      body: JSON.stringify({ id: goal.id, title: goal.title, description: goal.desc, target: goal.target, progress: goal.progress, user_id: this._uid }) })
   },
   async updateGoal(id, fields) {
     await this.query(`goals?id=eq.${id}`, { method: 'PATCH', prefer: 'return=minimal', body: JSON.stringify(fields) })
@@ -88,7 +88,7 @@ const db = {
   async deleteGoal(id) { await this.query(`goals?id=eq.${id}`, { method: 'DELETE' }) },
   async addLog(log, goalId) {
     await this.query('logs', { method: 'POST', prefer: 'return=minimal',
-      body: JSON.stringify({ id: log.id, goal_id: goalId, text: log.text,
+      body: JSON.stringify({ id: log.id, goal_id: goalId, text: log.text, user_id: this._uid,
         ai_score: log.aiScore, ai_reasoning: log.aiReasoning, ai_verdict: log.aiVerdict, ai_next: log.aiNext }) })
   },
   async deleteLog(id) { await this.query(`logs?id=eq.${id}`, { method: 'DELETE' }) },
@@ -251,6 +251,7 @@ export default function App() {
 
   useEffect(() => {
     if (!user) return
+    db._uid = user.id
     db.loadGoals().then(data => { setGoals(data); setLoading(false) })
       .catch(() => { setLoading(false); setSyncStatus('error') })
   }, [user])
